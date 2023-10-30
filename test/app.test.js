@@ -34,7 +34,3 @@ test("Should receive authentication token", () => {
       });
   });
 });
-
-test("Test password create", () => {
-  expect(validPassword)
-});

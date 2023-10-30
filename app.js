@@ -97,7 +97,7 @@ const auth = function(req, res, next) {
             }
 
             // Set current authenticated account
-            res.set("user", account)
+            req.user = account;
 
             // Move to the next request as is authenticated
             next();
@@ -194,24 +194,91 @@ app.post('/api/auth/sign-up', (req, res) => {
 
 });
 
-app.get('/api/transactions', auth, (req, res) => {
-    res.send('Hello World!')
+app.get('/api/transactions', auth, async (req, res) => {
+    
+    const cursor = db.collection("transactions").find({
+        user: req.user._id,
+    }).project({_id:1,amount:1});
+
+    const transactions = [];
+
+    while (await cursor.hasNext()) {
+        transactions.push(await cursor.next());
+    }
+
+    res.json(transactions);
 })
 
 app.get('/api/transactions/:id', auth, (req, res) => {
-    res.send('Hello World!')
+    
+    db.collection("transactions").findOne({
+        _id: ObjectId.createFromHexString(req.params.id)
+    }).then(transaction => {
+        
+        if (!transaction) {
+            res.status(404);
+            res.json({error:"Transaction not found"});
+            return
+        }
+
+        res.json(transaction);
+    })
 })
 
 app.post('/api/transactions', auth, (req, res) => {
-    res.send('Hello World!')
+
+    if (typeof(req.body.amount) != "number") {
+        res.json({error:"Amount must be a number"});
+        return;
+    }
+
+    if (req.body.amount < 1 || req.body.amount > 5000) {
+        res.json({error:"Amount between $1 and $5,000 inclusive."});
+        return;
+    }
+
+    const transaction = {
+        _id: new ObjectId(),
+        user: req.user._id,
+        amount: req.body.amount,
+    }
+
+    db.collection("transactions").insertOne(transaction)
+
+    res.json(transaction)
 })
 
 app.put('/api/transactions/:id', auth, (req, res) => {
-    res.send('Hello World!')
+
+    if (typeof(req.body.status) === 'undefined') {
+        res.status(400);
+        res.json({error:"Invalid status of transaction"})
+        return
+    }
+
+    db.collection("transactions").updateOne({
+        _id: ObjectId.createFromHexString(req.params.id),
+    }, {
+        "$set": {
+            "status": req.body.status,
+        }
+    }).then(() => {
+        res.end();
+    }).catch(e => {
+        res.json({error:"Failed to update status"});
+    })
 })
 
 app.delete('/api/transactions/:id', auth, (req, res) => {
-    res.send('Hello World!')
+    db.collection("transactions").deleteOne({
+        _id: ObjectId.createFromHexString(req.params.id)
+    }).then(() => {
+        res.status(410);
+        res.end();
+    }).catch(err => {
+        res.status(500);
+        res.json({error:"Failed to delete transaction"});
+    });
 })
 
 module.exports = app;
