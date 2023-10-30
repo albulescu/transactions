@@ -17,7 +17,10 @@ You can rather run `npm run test` or use https://paw.cloud and open *requests.pa
 
 ## Roadmap
 
-[x] - Registration/Authentication
-[x] - Simple transactions
+[✔] - Registration/Authentication
+
+[✔] - Simple transactions
+
 [ ] - Wallet
+
 [ ] - Complex transactions
