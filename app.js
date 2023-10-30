@@ -144,43 +144,50 @@ app.post('/api/auth/sign-in', (req, res) => {
 // Sign Up Endpoint
 app.post('/api/auth/sign-up', (req, res) => {
 
+    // Verify email be present
     if (typeof req.body.email === 'undefined') {
         res.json({error: "Email is mandatory"})
         res.status(400)
         return
     }
     
+    // Verify password be present
     if (typeof req.body.password === 'undefined') {
         res.json({error: "Password is mandatory"})
         res.status(400)
         return
     }
 
+    // Check password is valid
     if (!validPassword(req.body.password)) {
         res.json({error: "Password is invalid, the password must consist of 3 numbers, 3 lowercase letters, 2 uppercase letters and at least one special character"})
         res.status(400)
         return
     }
 
+    // Generate salt for hashing password
     bcrypt.genSalt(10, (err, salt) => {
 
+        // Verify for any errors durring the
+        // generation of password salt
         if (err != null || salt === '') {
             console.log(err);
             res.json({error: "Failed to generate salt"})
             return
         }
 
+        // Create password hash
         bcrypt.hash(req.body.password, salt, (err, password) => {
             
+            // Check any hashing password
             if (err != null) {
                 console.log(err);
                 res.json({error: "Failed to hash password"})
                 return
             }
 
-            const accounts = db.collection("accounts");
-
-            const result = accounts.insertOne({
+            // Insert current creating account
+            db.collection("accounts").insertOne({
                 email: req.body.email,
                 password,
                 _id: new ObjectId(),
@@ -194,6 +201,7 @@ app.post('/api/auth/sign-up', (req, res) => {
 
 });
 
+// Get all transactions endpoint
 app.get('/api/transactions', auth, async (req, res) => {
     
     const cursor = db.collection("transactions").find({
@@ -209,6 +217,7 @@ app.get('/api/transactions', auth, async (req, res) => {
     res.json(transactions);
 })
 
+// Get one transaction endpoint
 app.get('/api/transactions/:id', auth, (req, res) => {
     
     db.collection("transactions").findOne({
