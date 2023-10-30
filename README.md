@@ -8,3 +8,8 @@ For each transaction endpoint you must provide `Authorization` header containing
 
 - Clone repository
 - Run `npm run start` ( You can run "Launch Program" from Visual Studio )
+
+
+## Testing
+
+You can rather run `npm run test` or use https://paw.cloud and open requests.paw to pay with endpoints.
