@@ -7,9 +7,17 @@ For each transaction endpoint you must provide `Authorization` header containing
 ## Installation
 
 - Clone repository
+- Run `docker compose -f "docker-composer.yml" up -d --build`
 - Run `npm run start` ( You can run "Launch Program" from Visual Studio )
 
 
 ## Testing
 
 You can rather run `npm run test` or use https://paw.cloud and open *requests.paw* to play with endpoints.
+
+## Roadmap
+
+[x] - Registration/Authentication
+[x] - Simple transactions
+[ ] - Wallet
+[ ] - Complex transactions
