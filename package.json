@@ -1,0 +1,28 @@
+{
+  "name": "transactions",
+  "version": "1.0.0",
+  "description": "Transactions Microservice",
+  "main": "main.js",
+  "scripts": {
+    "run": "node main.js",
+    "test": "mocha"
+  },
+  "keywords": [
+    "transactions"
+  ],
+  "author": "cos",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.18.2",
+    "install": "^0.13.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "6.2",
+    "npm": "^10.2.1",
+    "supertest": "^6.3.3"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*"
+  }
+}
