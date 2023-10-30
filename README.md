@@ -12,4 +12,4 @@ For each transaction endpoint you must provide `Authorization` header containing
 
 ## Testing
 
-You can rather run `npm run test` or use https://paw.cloud and open requests.paw to pay with endpoints.
+You can rather run `npm run test` or use https://paw.cloud and open *requests.paw* to play with endpoints.
