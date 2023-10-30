@@ -4,7 +4,7 @@
   "description": "Transactions Microservice",
   "main": "main.js",
   "scripts": {
-    "run": "node main.js",
+    "start": "node main.js",
     "test": "mocha"
   },
   "keywords": [
