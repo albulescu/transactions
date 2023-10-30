@@ -7,4 +7,4 @@ For each transaction endpoint you must provide `Authorization` header containing
 ## Installation
 
 - Clone repository
-- Run `npm run start`
+- Run `npm run start` ( You can run "Launch Program" from Visual Studio )
