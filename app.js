@@ -13,7 +13,7 @@ const mongoClient = new MongoClient(`mongodb://root:example@localhost:27017/`);
 
 const db = mongoClient.db('transactions');
 
-// Create index for accounts unique account
+// Create index for accounts to store unique account
 db.collection("accounts").indexExists("accounts_unique").then(exists => {
     if (!exists) {
         db.collection("accounts").createIndex({
@@ -21,6 +21,40 @@ db.collection("accounts").indexExists("accounts_unique").then(exists => {
         }, { unique: true });
     }
 })
+
+// The password must consist of 3 numbers, 3 lowercase letters, 
+// 2 uppercase letters and at least one special character
+const validPassword = (pass) => {
+   
+    const count = (reg) => {
+        let count = 0;
+        for (let i=0; i<pass.length; i++) {
+            if(reg.test(pass.charAt(i))) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    if (3 != count(/^\d$/)) {
+        return false;
+    }
+
+    if (3 != count(/^[a-z]$/)) {
+        return false;
+    }
+
+    if (2 != count(/^[A-Z]$/)) {
+        return false;
+    }
+
+    if (0 == count(/^([@#$%&*])$/gi)) {
+        return false;
+    }
+
+    return true
+};
 
 // Authenticated endpoints middleware
 const auth = function(req, res, next) {
@@ -72,8 +106,10 @@ const auth = function(req, res, next) {
     });
 }
 
+// Specify endpoints are working with json
 app.use(express.json());
 
+// Sing In Endpoint
 app.post('/api/auth/sign-in', (req, res) => {
 
     db.collection("accounts").findOne({
@@ -84,7 +120,7 @@ app.post('/api/auth/sign-in', (req, res) => {
             
             // Compare password againgst the stored hash
             bcrypt.compare(req.body.password, account.password).then(passwordOK=>{
-                
+            
                 // If not authorized show status
                 if (!passwordOK) {
                     // Verify brute force attempt
@@ -105,6 +141,7 @@ app.post('/api/auth/sign-in', (req, res) => {
     })
 })
 
+// Sign Up Endpoint
 app.post('/api/auth/sign-up', (req, res) => {
 
     if (typeof req.body.email === 'undefined') {
@@ -115,6 +152,12 @@ app.post('/api/auth/sign-up', (req, res) => {
     
     if (typeof req.body.password === 'undefined') {
         res.json({error: "Password is mandatory"})
+        res.status(400)
+        return
+    }
+
+    if (!validPassword(req.body.password)) {
+        res.json({error: "Password is invalid, the password must consist of 3 numbers, 3 lowercase letters, 2 uppercase letters and at least one special character"})
         res.status(400)
         return
     }
